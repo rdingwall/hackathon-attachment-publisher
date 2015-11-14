@@ -115,7 +115,7 @@ func uploadAttachment(mondoApiClient *mondo.MondoApiClient, transactionId, bodyH
 
 func formatAmount(amount int32) string {
 	a := float32(-amount) / 100
-	return fmt.Sprintf("£%.2f", a)
+	return fmt.Sprintf("%.2f", a)
 }
 
 func getVendorMatchKey(str string) string {

@@ -23,6 +23,7 @@ _testmain.go
 *.test
 *.prof
 .idea
+hackathon-feeditem-publisher
 mondo-feeditem-publisher
 *.pem
 *.key

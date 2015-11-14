@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rdingwall/mondo-feeditem-publisher/email"
-	"github.com/rdingwall/mondo-feeditem-publisher/matching"
-	"github.com/rdingwall/mondo-feeditem-publisher/mondo"
+	"github.com/rdingwall/hackathon-feeditem-publisher/email"
+	"github.com/rdingwall/hackathon-feeditem-publisher/matching"
+	"github.com/rdingwall/hackathon-feeditem-publisher/mondo"
 	"log"
 	"net/http"
 	"strings"

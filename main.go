@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"github.com/go-martini/martini"
-	"github.com/rdingwall/mondo-feeditem-publisher/controllers"
-	"github.com/rdingwall/mondo-feeditem-publisher/matching"
-	"github.com/rdingwall/mondo-feeditem-publisher/mondo"
+	"github.com/rdingwall/hackathon-feeditem-publisher/controllers"
+	"github.com/rdingwall/hackathon-feeditem-publisher/matching"
+	"github.com/rdingwall/hackathon-feeditem-publisher/mondo"
 	"log"
 )
 

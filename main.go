@@ -13,14 +13,16 @@ import (
 var matcher = matching.NewMatcher()
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal(err)
+	if martini.Env != "production" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	mondoApiUri := os.Getenv("MONDO_API_URI")
 	mondoAccessToken := os.Getenv("MONDO_ACCESS_TOKEN")
-	addr := os.Getenv("ADDR")
+	addr := os.Getenv("ATTACHMENT_PUBLISHER_ADDR")
 
 	m := martini.Classic()
 	mondoApiClient := &mondo.MondoApiClient{Url: mondoApiUri, AccessToken: mondoAccessToken}

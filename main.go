@@ -8,6 +8,7 @@ import (
 	"github.com/rdingwall/hackathon-attachment-publisher/mondo"
 	"log"
 	"os"
+"strings"
 )
 
 var matcher = matching.NewMatcher()
@@ -23,6 +24,11 @@ func main() {
 	mondoApiUri := os.Getenv("MONDO_API_URI")
 	mondoAccessToken := os.Getenv("MONDO_ACCESS_TOKEN")
 	addr := os.Getenv("ATTACHMENT_PUBLISHER_ADDR")
+	vendors := os.Getenv("ATTACHMENT_PUBLISHER_VENDORS")
+	if vendors == "" {
+		log.Fatalf("no vendors configured!")
+	}
+	controllers.Vendors = strings.Split(vendors, ",")
 
 	m := martini.Classic()
 	mondoApiClient := &mondo.MondoApiClient{Url: mondoApiUri, AccessToken: mondoAccessToken}

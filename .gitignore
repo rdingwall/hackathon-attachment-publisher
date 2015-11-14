@@ -27,3 +27,4 @@ hackathon-attachment-publisher
 mondo-feeditem-publisher
 *.pem
 *.key
+.env

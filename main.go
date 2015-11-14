@@ -1,28 +1,28 @@
 package main
 
 import (
-	"flag"
-	"github.com/go-martini/martini"
+	"github.com/rdingwall/hackathon-attachment-publisher/Godeps/_workspace/src/github.com/go-martini/martini"
 	"github.com/rdingwall/hackathon-attachment-publisher/controllers"
 	"github.com/rdingwall/hackathon-attachment-publisher/matching"
 	"github.com/rdingwall/hackathon-attachment-publisher/mondo"
 	"log"
+	"github.com/joho/godotenv"
+	"os"
 )
-
-var mondoApiUri = flag.String("mondoApiUri", "https://staging-api.gmon.io", "Mondo API URI")
-var mondoAccessToken = flag.String("mondoAccessToken", "", "Mondo Access Token")
 
 var matcher = matching.NewMatcher()
 
 func main() {
-	flag.Parse()
-	if *mondoAccessToken == "" {
-		flag.PrintDefaults()
-		return
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
 	}
 
+	mondoApiUri := os.Getenv("MONDO_API_URI")
+	mondoAccessToken := os.Getenv("MONDO_ACCESS_TOKEN")
+
 	m := martini.Classic()
-	mondoApiClient := &mondo.MondoApiClient{Url: *mondoApiUri, AccessToken: *mondoAccessToken}
+	mondoApiClient := &mondo.MondoApiClient{Url: mondoApiUri, AccessToken: mondoAccessToken}
 	m.Map(matcher)
 	m.Map(mondoApiClient)
 	m.Post("/webhooks/mondo/transaction", controllers.PostMondoWebhook)

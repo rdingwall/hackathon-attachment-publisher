@@ -10,9 +10,10 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"os"
 )
 
-var vendors []string = []string{"beatport", "amazon", "apple"}
+var vendors = strings.Split(os.Getenv("ATTACHMENT_PUBLISHER_VENDORS"), ",")
 
 func PostMondoWebhook(w http.ResponseWriter, r *http.Request, matcher *matching.Matcher, mondoApiClient *mondo.MondoApiClient) {
 	defer r.Body.Close()

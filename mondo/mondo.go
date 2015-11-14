@@ -1,6 +1,7 @@
 package mondo
 
 import (
+	_ "crypto/sha512"
 	"encoding/json"
 	"errors"
 	"fmt"

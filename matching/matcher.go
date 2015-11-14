@@ -16,16 +16,17 @@ type Transaction struct {
 }
 
 type Email struct {
-	MessageId      string
-	Subject        string
-	Sender         string
-	BodyHtml       string
-	VendorMatchKey string
+	MessageId         string
+	Subject           string
+	Sender            string
+	BodyHtml          string
+	BodyHtmlBase64Url string
+	VendorMatchKey    string
 }
 
 type Match struct {
 	Transaction *Transaction
-	Receipt     *Email
+	Email       *Email
 }
 
 type Matcher struct {
@@ -47,7 +48,7 @@ func (m *Matcher) MatchTransaction(t *Transaction) *Match {
 			log.Printf("Matched transaction to receipt: %v --> %v\n", t, r)
 			return &Match{
 				Transaction: t,
-				Receipt:     r,
+				Email:       r,
 			}
 		}
 	}
@@ -64,7 +65,7 @@ func (m *Matcher) MatchEmail(e *Email) *Match {
 			log.Printf("Matched email to transaction: %v --> %v\n", e, t)
 			return &Match{
 				Transaction: t,
-				Receipt:     e,
+				Email:       e,
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/rdingwall/hackathon-attachment-publisher/email"
+	"github.com/rdingwall/hackathon-attachment-publisher/html2png"
 	"github.com/rdingwall/hackathon-attachment-publisher/matching"
 	"github.com/rdingwall/hackathon-attachment-publisher/mondo"
 	"log"
@@ -23,38 +24,38 @@ func PostMondoWebhook(w http.ResponseWriter, r *http.Request, matcher *matching.
 		return
 	}
 
-	go func() {
-		if request.Data.Amount > 0 {
-			log.Printf("ignored credit transaction")
-			return
-		}
+	if request.Data.Amount > 0 {
+		log.Printf("ignored credit transaction")
+		return
+	}
 
-		vendorMatchKey := getVendorMatchKey(request.Data.Description)
-		if vendorMatchKey == "" {
-			log.Printf("ignored unrecognised vendor")
-			return
-		}
+	vendorMatchKey := getVendorMatchKey(request.Data.Description)
+	if vendorMatchKey == "" {
+		log.Printf("ignored unrecognised vendor")
+		return
+	}
 
-		transaction := &matching.Transaction{
-			Amount:         formatAmount(request.Data.Amount),
-			Created:        request.Data.Created,
-			Currency:       request.Data.Currency,
-			Description:    request.Data.Description,
-			Id:             request.Data.Id,
-			VendorMatchKey: vendorMatchKey,
-		}
+	transaction := &matching.Transaction{
+		Amount:         formatAmount(request.Data.Amount),
+		Created:        request.Data.Created,
+		Currency:       request.Data.Currency,
+		Description:    request.Data.Description,
+		Id:             request.Data.Id,
+		VendorMatchKey: vendorMatchKey,
+	}
 
-		match := matcher.MatchTransaction(transaction)
-		if match != nil {
-			log.Printf("got match!!")
-			resp, err := mondoApiClient.RegisterAttachment(match.Transaction.Id, "http://i.imgur.com/OLEsqBH.png", "image/png")
-			if (err != nil) {
-				log.Printf(err.Error())
-			}
+	match := matcher.MatchTransaction(transaction)
+	if match == nil {
+		return
+	}
 
-			log.Printf("%s\n", resp)
-		}
-	}()
+	log.Printf("got match!!")
+	err = uploadAttachment(mondoApiClient, match.Transaction.Id, match.Email.BodyHtmlBase64Url)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("upload error: %s\n", err.Error())
+		return
+	}
 }
 
 func PostEmailWebhook(w http.ResponseWriter, r *http.Request, matcher *matching.Matcher, mondoApiClient *mondo.MondoApiClient) {
@@ -67,38 +68,49 @@ func PostEmailWebhook(w http.ResponseWriter, r *http.Request, matcher *matching.
 		return
 	}
 
-	go func() {
+	vendorMatchKey := getVendorMatchKey(request.Subject)
+	if vendorMatchKey == "" {
+		log.Printf("ignored unrecognised vendor")
+		return
+	}
 
-		vendorMatchKey := getVendorMatchKey(request.Subject)
-		if vendorMatchKey == "" {
-			log.Printf("ignored unrecognised vendor")
-			return
-		}
+	bodyHtml, err := request.HTML()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("html decode error: %s\n", err.Error())
+		return
+	}
 
-		bodyHtml, err := request.HTML()
-		if err != nil {
-			log.Printf("html decode error: %s\n", err.Error())
-			return
-		}
+	transaction := &matching.Email{
+		MessageId:         request.Id,
+		Subject:           request.Subject,
+		BodyHtml:          bodyHtml,
+		BodyHtmlBase64Url: request.Body,
+		VendorMatchKey:    vendorMatchKey,
+	}
 
-		transaction := &matching.Email{
-			MessageId:      request.Id,
-			Subject:        request.Subject,
-			BodyHtml:       bodyHtml,
-			VendorMatchKey: vendorMatchKey,
-		}
+	match := matcher.MatchEmail(transaction)
+	if match == nil {
+		return
+	}
 
-		match := matcher.MatchEmail(transaction)
-		if match != nil {
-			log.Printf("got match!!")
-			resp, err := mondoApiClient.RegisterAttachment(match.Transaction.Id, "http://i.imgur.com/OLEsqBH.png", "image/png")
-			if (err != nil) {
-				log.Printf(err.Error())
-			}
+	err = uploadAttachment(mondoApiClient, match.Transaction.Id, match.Email.BodyHtmlBase64Url)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("upload error: %s\n", err.Error())
+		return
+	}
+}
 
-			log.Printf("%s\n", resp)
-		}
-	}()
+func uploadAttachment(mondoApiClient *mondo.MondoApiClient, transactionId, bodyHtmlBase64 string) error {
+	response, err := html2png.Post(bodyHtmlBase64)
+	if err != nil {
+		return err
+	}
+
+	resp, err := mondoApiClient.RegisterAttachment(transactionId, response.Uri, "image/png")
+	log.Printf("%v\n", resp)
+	return err
 }
 
 func formatAmount(amount int32) string {

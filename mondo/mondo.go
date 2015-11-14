@@ -22,7 +22,7 @@ type MondoApiClient struct {
 	ClientId     string
 	ClientSecret string
 	Url          string
-	AccessToken string
+	AccessToken  string
 }
 
 type RegisterWebhookRequest struct {

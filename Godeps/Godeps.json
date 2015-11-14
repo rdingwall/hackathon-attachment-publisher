@@ -1,0 +1,16 @@
+{
+	"ImportPath": "github.com/rdingwall/hackathon-attachment-publisher",
+	"GoVersion": "go1.5.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-10-g33e0aa1",
+			"Rev": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504"
+		},
+		{
+			"ImportPath": "github.com/go-martini/martini",
+			"Comment": "v1.0-168-g1766d4b",
+			"Rev": "1766d4b551f29d93db1e721e19b15580699e26cc"
+		}
+	]
+}

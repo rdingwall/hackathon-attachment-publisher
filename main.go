@@ -28,6 +28,10 @@ func main() {
 	m.Map(mondoApiClient)
 	m.Post("/webhooks/mondo/transaction", controllers.PostMondoWebhook)
 	m.Post("/webhooks/email", controllers.PostEmailWebhook)
+	m.Get("/", func() string {
+		return "Hello Mondo crowd!"
+	})
+
 	m.RunOnAddr(addr)
 }
 

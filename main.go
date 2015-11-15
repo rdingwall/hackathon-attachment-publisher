@@ -1,14 +1,14 @@
 package main
 
 import (
+	"github.com/go-martini/martini"
 	"github.com/joho/godotenv"
-	"github.com/rdingwall/hackathon-attachment-publisher/Godeps/_workspace/src/github.com/go-martini/martini"
 	"github.com/rdingwall/hackathon-attachment-publisher/controllers"
 	"github.com/rdingwall/hackathon-attachment-publisher/matching"
 	"github.com/rdingwall/hackathon-attachment-publisher/mondo"
 	"log"
 	"os"
-"strings"
+	"strings"
 )
 
 var matcher = matching.NewMatcher()

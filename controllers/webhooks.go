@@ -3,13 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jelmersnoeck/mondo-email-receiver/email"
 	"github.com/rdingwall/hackathon-attachment-publisher/html2png"
 	"github.com/rdingwall/hackathon-attachment-publisher/matching"
 	"github.com/rdingwall/hackathon-attachment-publisher/mondo"
 	"log"
 	"net/http"
 	"strings"
+"github.com/rdingwall/hackathon-attachment-publisher/email"
 )
 
 var Vendors []string = nil

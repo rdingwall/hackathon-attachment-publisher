@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strings"
 "github.com/rdingwall/hackathon-attachment-publisher/email"
+	"encoding/base64"
 )
 
 var Vendors []string = nil
@@ -85,7 +86,7 @@ func PostEmailWebhook(w http.ResponseWriter, r *http.Request, matcher *matching.
 		MessageId:         request.Id,
 		Subject:           request.Subject,
 		BodyHtml:          bodyHtml,
-		BodyHtmlBase64Url: request.Body,
+		BodyHtmlBase64Url: base64.URLEncoding.EncodeToString([]byte(bodyHtml)),
 		VendorMatchKey:    vendorMatchKey,
 	}
 
